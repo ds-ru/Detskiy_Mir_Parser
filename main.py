@@ -3,6 +3,7 @@ import json
 from bs4 import BeautifulSoup
 import pandas as pd
 
+
 data = pd.read_excel(r"data.xlsx")
 rows = data['Код SKU'].dropna()
 results = []
