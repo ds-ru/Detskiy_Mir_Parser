@@ -1,10 +1,7 @@
 import requests
-import re
 import json
 from bs4 import BeautifulSoup
 import pandas as pd
-import time
-import os
 
 data = pd.read_excel(r"data.xlsx")
 rows = data['Код SKU'].dropna()
