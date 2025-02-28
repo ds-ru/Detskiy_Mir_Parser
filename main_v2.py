@@ -25,7 +25,6 @@ for row in rows:
             # Используем BeautifulSoup для обработки HTML
             soup = BeautifulSoup(response.text, 'html.parser')
             # Поиск всех <script> тегов
-
             script_datas = soup.find_all("script")
             for script_data in script_datas:
                 if script_data.string and 'appData' in script_data.string:
@@ -38,19 +37,21 @@ for row in rows:
                         json_text = json_text.replace(r'\"', '"')  # Убираем экранирование
                         json_text = json_text[1:]
                         app_data = json.loads(json_text)  # Преобразуем в словарь Python
+                        # print(json.dumps(app_data, indent=4), "\n\n\n\n")
                         break  # Завершаем после первого совпадения
                     except Exception as e:
                         print("Ошибка при обработке JSON:", e)
+
             # Поиск нужного товара по SKU и добавление данных в результаты
             for suggestion in app_data['search']['data']['suggestions']:
                 if suggestion['type'] == 'product':
                     product = suggestion['filter'].get('product')
-                    if product and product.get('code') == row:
-                        title_found = product['title']
-                        print(title_found)
-                        # Добавляем результат в список
-                        results.append({'Код SKU': row, 'Название': title_found})
-                        break
+                    # if product and product.get('code') == row:
+                    title_found = product['title']
+                    print(title_found)
+                    # Добавляем результат в список
+                    results.append({'Код SKU': row, 'Название': title_found})
+                    break
         else:
             print(f"Ошибка при загрузке страницы: {response.status_code}")
 
@@ -59,10 +60,9 @@ for row in rows:
 
 print(results)
 
-if not os.path.exists(r"results.xlsx"):
-    with open(r"results.xlsx", "w") as file:
-        if results:
-            output_df = pd.DataFrame(results)
-            output_df.to_excel(file, index=False)
-        else:
-            print("Нет данных для записи.")
+# Запись результатов в Excel
+if results:
+    output_df = pd.DataFrame(results)
+    output_df.to_excel(r"results.xlsx", index=False)
+else:
+    print("Нет данных для записи.")
